@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "loJ/VTe9g4tNY2OUquklPWKpYblq6We6T1RZZPRDk+3jqB+bDsE6YpEScesN61ht0OrP4Ca0KGLVbvatwFVs3g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Soza PC\\source\\repos\\MyERP\\MyERP.WebClient\\MyERP.WebClient.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Soza PC\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

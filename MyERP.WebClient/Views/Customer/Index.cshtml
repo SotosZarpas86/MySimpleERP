@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Customers";
+}
+
+
+<div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <input type="button" class="btn btn-primary" value="Create Customer" onclick="location.href='@Url.Action("Add", "Customer")'" />
+
+    </div>
+    <div class="col-4"></div>
+</div>
+
+<div class="row" style="margin-top: 10px;">
+    <div class="col-12">
+        <table class="table table-bordered table-condensed table-hover table-striped" id="myTable">
+            <thead>
+                <tr id="myheader">
+                </tr>
+            </thead>
+            <tbody id="myBody">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Customer/GetAll/",
+            contentType: "application/json; charset=utf-8",
+            cache: false,
+            traditional: true,
+            dataType: "json",
+            processData: true,
+            success: function (data) {
+                var parsedData = JSON.parse(data);
+
+                var headersArray = [];
+                var firstRow = parsedData[0];
+                for (var i in firstRow) {
+                    headersArray.push(i);
+                }
+
+                var header = '';
+                for (var j = 0; j < headersArray.length; j++) {
+                    header += '<th>' + headersArray[j] + '</th>';
+                }
+                header = header + '<th>Actions</th>';
+
+                $('#myheader').append(header);
+
+                for (var k in parsedData) {
+                    var row = '<tr>';
+                    var values = parsedData[k];
+                    var parsedValues = Object.values(values);
+                    for (var l in parsedValues) {
+                        row += '<td>' + parsedValues[l] + '</td>';
+                    }
+                    row = row + '<td><input type="button" value="Edit" onClick="edit(\'' + parsedValues[0] + '\')" /></td>';
+                    row = row + '</tr>';
+                    $('#myBody').append(row);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+    });
+
+    function edit(e) {
+        var url = "/Customer/Edit?id=" + e;
+        window.location.href = url;
+    }
+</script> 

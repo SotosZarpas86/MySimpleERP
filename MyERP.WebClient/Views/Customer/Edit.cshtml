@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <form id="myForm" method="post" asp-controller="Customer" asp-action="Edit" enctype="application/x-www-form-urlencoded">
+            <table id="myTable">
+            </table>
+            <hr />
+        </form>
+    </div>
+    <div class="col-3"></div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <h1>History Changes</h1>
+        <table class="table table-striped table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th class="center">Field Name</th>
+                    <th class="center">Previous Value</th>
+                    <th class="center">Current Value</th>
+                    <th class="center">Date Modified</th>
+                </tr>
+            </thead>
+
+            <tbody id="historyChanges"></tbody>
+        </table>
+    </div>
+    <div class="col-1"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var customerId = '@ViewBag.Id';
+
+        $.ajax({
+            type: "GET",
+            url: "/Customer/GetById",
+            data: { id: customerId },
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                var parsedData = JSON.parse(data);
+                for (var i in parsedData) {
+                    var row = '<tr>';
+                    var values = parsedData[i];
+
+                    row += '<td>' + i + ': </td>'
+                    if (i === 'Id') {
+                        row += '<td><input readonly type="text" id="' + i + '" name="' + i + '" value="' + values + '" /></td>';
+                    } else {
+                        row += '<td><input type="text" id="' + i + '" name="' + i + '" value="' + values + '" /></td>';
+                    }
+
+                    row = row + '</tr>';
+                    $('#myTable').append(row);
+                }
+
+                var button = ' <tr><td></td><td><input type="submit" value="Submit" /></td></tr>';
+                $('#myTable').append(button);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Customer/GetHistoryChangesByCustomer",
+            data: { id: customerId },
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                var row = "";
+                $.each(data, function (index, item) {
+                    row += "<tr><td>" + item.fieldName + "</td><td>" + item.previousValue + "</td><td>" + item.currentValue + "</td><td>" + item.modifiedDate + "</td></tr>";
+                });
+                $("#historyChanges").html(row); 
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+    });
+
+    $("#myForm").submit(function () {
+        debugger;
+        var formData = $('#myForm').serialize();
+        var result = JSON.stringify(formData);
+        $.ajax({
+            type: "POST",
+            url: "/Customer/Edit",
+            data: result,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var url = "/Customer";
+                window.location.href = url;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+        return false;
+    });
+
+</script>
